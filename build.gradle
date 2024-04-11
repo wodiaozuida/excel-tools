@@ -29,7 +29,7 @@ mainClassName = 'Test' // 指定程序的主类
 launch4j {
     mainClassName = 'Test' // 指定程序的主类
     outfile = 'build/Test.exe' // 指定生成的EXE文件的路径
-    jar = 'C:\\Users\\81274789.CORPHQ-HK-PCCW\\Desktop\\xiaohongshu\\build\\libs\\xiaohongshu-all.jar' // 指定要打包的JAR文件路径
+    jar = 'C:\\Users\\81274789.CORPHQ-HK-PCCW\\Desktop\\excel-tools\\build\\libs\\excel-tools-all.jar' // 指定要打包的JAR文件路径
      bundledJrePath = 'C:\\may\\xiaohongshu\\jre1.8.0_361'
 //    bundledJre64Bit = true
     // 其他配置
