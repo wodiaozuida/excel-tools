@@ -46,20 +46,37 @@ public class Test {
     public static String shortToLong(String url){
         try {
             URL urlObject = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();
-            connection.setInstanceFollowRedirects(false); // 禁止自动重定向
-            int responseCode = connection.getResponseCode();
+            String prefix = "https://v.douyin.com";
+            if(url.startsWith(prefix)){
+                HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();
+                connection.setInstanceFollowRedirects(false); // 禁止自动重定向
+                int responseCode = connection.getResponseCode();
 
-            if (responseCode >= 300 && responseCode < 400) {
-                String redirectedUrl = connection.getHeaderField("Location");
-                String[] parts = redirectedUrl.split("\\?");
+                if (responseCode >= 300 && responseCode < 400) {
+                    String redirectedUrl = connection.getHeaderField("Location");
+                    String[] parts = redirectedUrl.split("\\?");
+                    return douyinUrl3(parts[0]);
+                }else if(responseCode == 200){
+                    return douyinAllUrl(url);
+                }
+
+                connection.disconnect();
+            }else{
+                HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();
+                connection.setInstanceFollowRedirects(false); // 禁止自动重定向
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode >= 300 && responseCode < 400) {
+                    String redirectedUrl = connection.getHeaderField("Location");
+                    String[] parts = redirectedUrl.split("\\?");
 //                return parts[0];
-                return douyinUrl2(parts[0]);
-            }else if(responseCode == 200){
-                return douyinAllUrl(url);
-            }
+                    return douyinUrl2(parts[0]);
+                }else if(responseCode == 200){
+                    return douyinAllUrl(url);
+                }
 
-            connection.disconnect();
+                connection.disconnect();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,6 +96,32 @@ public class Test {
         String replacement = "https://www.douyin.com/video/$1";
 
         return input.replaceAll(pattern, replacement);
+    }
+
+    public static String douyinUrl3(String input){
+        String originalUrl = "https://www.iesdouyin.com/share/note/7360647663789870336/?region=CN&schema_type=37";
+
+        // 提取数字部分
+        Pattern pattern = Pattern.compile("/note/(\\d+)/");
+        Matcher matcher = pattern.matcher(originalUrl);
+        String number = "";
+        if (matcher.find()) {
+            number = matcher.group(1);
+        }
+
+        // 提取参数部分
+        pattern = Pattern.compile("schema_type=(\\d+)");
+        matcher = pattern.matcher(originalUrl);
+        String schemaType = "";
+        if (matcher.find()) {
+            schemaType = matcher.group(1);
+            // 拼接目标URL
+            return "https://www.iesdouyin.com/share/video/" + number + "?schema_type=" + schemaType;
+        }else{
+            return shortToLong(input);
+        }
+
+
     }
 
     public static String douyinAllUrl(String input){
