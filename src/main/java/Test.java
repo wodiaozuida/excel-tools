@@ -54,8 +54,8 @@ public class Test {
 
                 if (responseCode >= 300 && responseCode < 400) {
                     String redirectedUrl = connection.getHeaderField("Location");
-                    String[] parts = redirectedUrl.split("\\?");
-                    return douyinUrl3(parts[0]);
+//                    String[] parts = redirectedUrl.split("\\?");
+                    return douyinUrl3(redirectedUrl);
                 }else if(responseCode == 200){
                     return douyinAllUrl(url);
                 }
@@ -99,11 +99,11 @@ public class Test {
     }
 
     public static String douyinUrl3(String input){
-        String originalUrl = "https://www.iesdouyin.com/share/note/7360647663789870336/?region=CN&schema_type=37";
+//        String originalUrl = "https://www.iesdouyin.com/share/note/7360647663789870336/?region=CN&schema_type=37";
 
         // 提取数字部分
-        Pattern pattern = Pattern.compile("/note/(\\d+)/");
-        Matcher matcher = pattern.matcher(originalUrl);
+        Pattern pattern = Pattern.compile("https://www.iesdouyin.com/share/note/(\\d+)/");
+        Matcher matcher = pattern.matcher(input);
         String number = "";
         if (matcher.find()) {
             number = matcher.group(1);
@@ -111,7 +111,7 @@ public class Test {
 
         // 提取参数部分
         pattern = Pattern.compile("schema_type=(\\d+)");
-        matcher = pattern.matcher(originalUrl);
+        matcher = pattern.matcher(input);
         String schemaType = "";
         if (matcher.find()) {
             schemaType = matcher.group(1);
