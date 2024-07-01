@@ -7,10 +7,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Test {
+
     public static void main(String[] args) {
         readExcel();
     }
@@ -45,6 +48,12 @@ public class Test {
 
     public static String shortToLong(String url){
         try {
+//            url = "https://v.douyin.com/i2hPHrp2/ wsR:/ M@j.pd 05/22";
+            url = url.trim();
+            if (url.endsWith("，") || url.endsWith(",")) {
+                url = url.substring(0, url.length() - 1);
+            }
+            url = url.replace(" ", "%20");
             URL urlObject = new URL(url);
             String prefix = "https://v.douyin.com";
             if(url.startsWith(prefix)){
@@ -52,7 +61,7 @@ public class Test {
                 connection.setInstanceFollowRedirects(false); // 禁止自动重定向
                 int responseCode = connection.getResponseCode();
 
-                if (responseCode >= 300 && responseCode < 400) {
+                if (responseCode >= 300 && responseCode <= 400) {
                     String redirectedUrl = connection.getHeaderField("Location");
 //                    String[] parts = redirectedUrl.split("\\?");
                     return douyinUrl3(redirectedUrl);
@@ -69,7 +78,6 @@ public class Test {
                 if (responseCode >= 300 && responseCode < 400) {
                     String redirectedUrl = connection.getHeaderField("Location");
                     String[] parts = redirectedUrl.split("\\?");
-//                return parts[0];
                     return douyinUrl2(parts[0]);
                 }else if(responseCode == 200){
                     return douyinAllUrl(url);
@@ -94,8 +102,8 @@ public class Test {
     public static String douyinUrl2(String input){
         String pattern = "https://www.iesdouyin.com/share/video/(\\d+)/";
         String replacement = "https://www.douyin.com/video/$1";
-
-        return input.replaceAll(pattern, replacement);
+        String returnUrl = input.replaceAll(pattern, replacement);
+        return returnUrl;
     }
 
     public static String douyinUrl3(String input){
@@ -125,7 +133,6 @@ public class Test {
     }
 
     public static String douyinAllUrl(String input){
-//        String pattern1 = "https://www.douyin.com/user/[^/]+\\?modal_id=(\\d+)&.*";
         String pattern1 = "https://www.douyin.com/user/[^/]+\\?modal_id=(\\d+)";
         String pattern2 = "https://www.iesdouyin.com/share/video/(\\d+)/";
 
@@ -137,7 +144,8 @@ public class Test {
         Matcher m1 = p1.matcher(input);
         Matcher m2 = p2.matcher(input);
 
-        if (m1.matches()) {
+//        boolean aa = m1.find();
+        if (m1.find()) {
             return "https://www.douyin.com/video/" + m1.group(1);
         }
 
